@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+#define MAX 1000
+
+// Simple hash map using arrays
+int main() {
+    int arr[] = {15, -2, 2, -8, 1, 7, 10, 23};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int sum = 0, max_len = 0;
+
+    // Hash table (stores prefix sum and index)
+    int hash[MAX];
+    for (int i = 0; i < MAX; i++)
+        hash[i] = -1;
+
+    for (int i = 0; i < n; i++) {
+        sum += arr[i];
+
+        // Case 1: sum = 0
+        if (sum == 0) {
+            max_len = i + 1;
+        }
+
+        // Case 2: sum seen before
+        if (hash[sum + 500] != -1) {
+            int len = i - hash[sum + 500];
+            if (len > max_len)
+                max_len = len;
+        } else {
+            // Store first occurrence
+            hash[sum + 500] = i;
+        }
+    }
+
+    printf("Length of longest subarray with zero sum = %d\n", max_len);
+
+    return 0;
+}
