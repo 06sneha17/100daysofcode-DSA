@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to store value and original index
+struct Element {
+    int value;
+    int index;
+};
+
+// Merge function
+void merge(struct Element arr[], int left, int mid, int right, int count[]) {
+
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    struct Element L[n1], R[n2];
+
+    // Copy data
+    for(int i = 0; i < n1; i++)
+        L[i] = arr[left + i];
+
+    for(int j = 0; j < n2; j++)
+        R[j] = arr[mid + 1 + j];
+
+    int i = 0, j = 0, k = left;
+    int rightCount = 0;
+
+    // Merge arrays
+    while(i < n1 && j < n2) {
+
+        if(L[i].value <= R[j].value) {
+
+            // Add smaller elements count
+            count[L[i].index] += rightCount;
+
+            arr[k++] = L[i++];
+        }
+        else {
+            // Right element is smaller
+            rightCount++;
+
+            arr[k++] = R[j++];
+        }
+    }
+
+    // Remaining left elements
+    while(i < n1) {
+        count[L[i].index] += rightCount;
+
+        arr[k++] = L[i++];
+    }
+
+    // Remaining right elements
+    while(j < n2) {
+        arr[k++] = R[j++];
+    }
+}
+
+// Merge Sort function
+void mergeSort(struct Element arr[], int left, int right, int count[]) {
+
+    if(left < right) {
+
+        int mid = (left + right) / 2;
+
+        mergeSort(arr, left, mid, count);
+        mergeSort(arr, mid + 1, right, count);
+
+        merge(arr, left, mid, right, count);
+    }
+}
+
+int main() {
+
+    int nums[] = {5, 2, 6, 1};
+    int n = sizeof(nums) / sizeof(nums[0]);
+
+    struct Element arr[n];
+    int count[n];
+
+    // Initialize arrays
+    for(int i = 0; i < n; i++) {
+        arr[i].value = nums[i];
+        arr[i].index = i;
+        count[i] = 0;
+    }
+
+    // Apply merge sort
+    mergeSort(arr, 0, n - 1, count);
+
+    printf("Array:\n");
+    for(int i = 0; i < n; i++) {
+        printf("%d ", nums[i]);
+    }
+
+    printf("\n\nCount of smaller elements on right:\n");
+
+    for(int i = 0; i < n; i++) {
+        printf("%d ", count[i]);
+    }
+
+    printf("\n");
+
+    return 0;
+}

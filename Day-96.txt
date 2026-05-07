@@ -1,0 +1,87 @@
+#include <stdio.h>
+
+// Merge function
+int merge(int arr[], int temp[], int left, int mid, int right) {
+    int i = left;      // Left subarray index
+    int j = mid + 1;   // Right subarray index
+    int k = left;      // Temp array index
+    int inv_count = 0;
+
+    // Merge two subarrays
+    while(i <= mid && j <= right) {
+        if(arr[i] <= arr[j]) {
+            temp[k++] = arr[i++];
+        }
+        else {
+            temp[k++] = arr[j++];
+
+            // Count inversions
+            inv_count += (mid - i + 1);
+        }
+    }
+
+    // Copy remaining elements of left subarray
+    while(i <= mid) {
+        temp[k++] = arr[i++];
+    }
+
+    // Copy remaining elements of right subarray
+    while(j <= right) {
+        temp[k++] = arr[j++];
+    }
+
+    // Copy temp array back to original array
+    for(i = left; i <= right; i++) {
+        arr[i] = temp[i];
+    }
+
+    return inv_count;
+}
+
+// Merge Sort function
+int mergeSort(int arr[], int temp[], int left, int right) {
+    int mid, inv_count = 0;
+
+    if(left < right) {
+        mid = (left + right) / 2;
+
+        // Left subarray inversions
+        inv_count += mergeSort(arr, temp, left, mid);
+
+        // Right subarray inversions
+        inv_count += mergeSort(arr, temp, mid + 1, right);
+
+        // Merge inversions
+        inv_count += merge(arr, temp, left, mid, right);
+    }
+
+    return inv_count;
+}
+
+// Print array
+void printArray(int arr[], int n) {
+    int i;
+    for(i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {8, 4, 2, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int temp[n];
+
+    printf("Original Array:\n");
+    printArray(arr, n);
+
+    int inversions = mergeSort(arr, temp, 0, n - 1);
+
+    printf("Sorted Array:\n");
+    printArray(arr, n);
+
+    printf("Number of Inversions = %d\n", inversions);
+
+    return 0;
+}
